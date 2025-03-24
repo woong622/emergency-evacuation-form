@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AlertCircleIcon, RefreshCwIcon, SendIcon, CheckIcon, XIcon } from 'lucide-react';
+import { AlertCircleIcon, RefreshCwIcon, SendIcon, ArrowRightIcon, UserIcon } from 'lucide-react';
 // Mock database for service number lookup
 const mockUserDatabase = {
   '12345678': {
@@ -15,7 +15,27 @@ const mockUserDatabase = {
     affiliation: '제3특전여단'
   }
 };
+// Mock transport information database
+const mockTransportDatabase = {
+  '12345678': {
+    emergencyStatus: 'emergency',
+    hospitalAffiliation: '국군수도병원',
+    doctorName: '박의사',
+    doctorRank: '대위',
+    doctorSpecialty: '내과',
+    travelTime: '30'
+  },
+  '87654321': {
+    emergencyStatus: 'non-emergency',
+    hospitalAffiliation: '국군대전병원',
+    doctorName: '김의사',
+    doctorRank: '소령',
+    doctorSpecialty: '외과',
+    travelTime: '45'
+  }
+};
 export function EmergencyTransportForm() {
+  const [step, setStep] = useState(1); // 1: 환자 정보, 2: 후송 정보
   const [formData, setFormData] = useState({
     serviceNumber: '',
     name: '',
@@ -37,7 +57,6 @@ export function EmergencyTransportForm() {
       value
     } = e.target;
     setFormData(prev => {
-      // If service number is being changed, check for auto-fill data
       if (name === 'serviceNumber' && mockUserDatabase[value]) {
         const userData = mockUserDatabase[value];
         return {
@@ -60,12 +79,29 @@ export function EmergencyTransportForm() {
       consciousness: value
     }));
   };
-  // Handle form submission
-  const handleSubmit = e => {
+  // Handle patient info submission
+  const handlePatientInfoSubmit = e => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Here you would typically send the data to an API
-    alert('양식이 제출되었습니다.');
+    // Validate required fields
+    if (!formData.serviceNumber || !formData.mainSymptoms || !formData.consciousness) {
+      alert('필수 정보를 모두 입력해주세요.');
+      return;
+    }
+    // Get transport info from mock database
+    const transportInfo = mockTransportDatabase[formData.serviceNumber];
+    if (transportInfo) {
+      setFormData(prev => ({
+        ...prev,
+        ...transportInfo
+      }));
+    }
+    setStep(2);
+  };
+  // Handle final form submission
+  const handleFinalSubmit = e => {
+    e.preventDefault();
+    console.log('Final form submitted:', formData);
+    alert('후송 정보가 제출되었습니다.');
   };
   // Handle form reset
   const handleReset = () => {
@@ -83,129 +119,187 @@ export function EmergencyTransportForm() {
       doctorSpecialty: '',
       travelTime: ''
     });
+    setStep(1);
   };
-  return <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Left Section */}
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-gray-700 border-b pb-2">
-            환자 정보
-          </h2>
-          <div className="space-y-3">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                군번
-              </label>
-              <input type="text" name="serviceNumber" value={formData.serviceNumber} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="군번 입력" />
+  return <div className="bg-white rounded-lg shadow-md p-6">
+      {/* Progress indicator */}
+      <div className="mb-6">
+        <div className="flex items-center">
+          <div className="flex items-center text-blue-600">
+            <div className="bg-blue-600 rounded-full h-8 w-8 flex items-center justify-center text-white">
+              1
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  이름
-                </label>
-                <input type="text" name="name" value={formData.name} readOnly className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  소속
-                </label>
-                <input type="text" name="affiliation" value={formData.affiliation} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-              </div>
+            <span className="ml-2 font-medium">환자 정보</span>
+          </div>
+          <div className="flex-1 mx-4 h-0.5 bg-gray-200">
+            <div className={`h-0.5 bg-blue-600 transition-all duration-500 ${step === 2 ? 'w-full' : 'w-0'}`} />
+          </div>
+          <div className={`flex items-center ${step === 2 ? 'text-blue-600' : 'text-gray-400'}`}>
+            <div className={`rounded-full h-8 w-8 flex items-center justify-center border-2 ${step === 2 ? 'border-blue-600 bg-blue-600 text-white' : 'border-gray-400'}`}>
+              2
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                주증상
-              </label>
-              <textarea name="mainSymptoms" value={formData.mainSymptoms} onChange={handleInputChange} rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="주요 증상을 입력하세요" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                활력징후
-              </label>
-              <textarea name="vitalSigns" value={formData.vitalSigns} onChange={handleInputChange} rows={2} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="혈압, 맥박, 호흡 등" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                의식 여부
-              </label>
-              <div className="flex space-x-4">
-                <button type="button" onClick={() => handleConsciousnessSelect('O')} className={`flex items-center justify-center w-12 h-12 rounded-full ${formData.consciousness === 'O' ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700'}`}>
-                  O
-                </button>
-                <button type="button" onClick={() => handleConsciousnessSelect('△')} className={`flex items-center justify-center w-12 h-12 rounded-full ${formData.consciousness === '△' ? 'bg-yellow-500 text-white' : 'bg-gray-100 text-gray-700'}`}>
-                  △
-                </button>
-                <button type="button" onClick={() => handleConsciousnessSelect('X')} className={`flex items-center justify-center w-12 h-12 rounded-full ${formData.consciousness === 'X' ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-700'}`}>
-                  X
-                </button>
-              </div>
-            </div>
+            <span className="ml-2 font-medium">후송 정보</span>
           </div>
         </div>
-        {/* Right Section */}
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-gray-700 border-b pb-2">
-            후송 정보
-          </h2>
-          <div className="space-y-3">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                응급/비응급 여부
-              </label>
-              <select name="emergencyStatus" value={formData.emergencyStatus} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                <option value="">선택하세요</option>
-                <option value="emergency">응급</option>
-                <option value="non-emergency">비응급</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                소속병원
-              </label>
-              <input type="text" name="hospitalAffiliation" value={formData.hospitalAffiliation} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="병원명 입력" />
-            </div>
+      </div>
+      {step === 1 ?
+    // Step 1: Patient Information Form
+    <form onSubmit={handlePatientInfoSubmit}>
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold text-gray-700 border-b pb-2">
+              환자 정보
+            </h2>
             <div className="space-y-3">
-              <label className="block text-sm font-medium text-gray-700">
-                군의관 정보
-              </label>
-              <div className="grid grid-cols-3 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  군번 <span className="text-red-500">*</span>
+                </label>
+                <input type="text" name="serviceNumber" value={formData.serviceNumber} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="군번 입력" required />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <input type="text" name="doctorName" value={formData.doctorName} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="성명" />
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    이름
+                  </label>
+                  <input type="text" name="name" value={formData.name} readOnly className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50" />
                 </div>
                 <div>
-                  <input type="text" name="doctorRank" value={formData.doctorRank} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="계급" />
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    소속
+                  </label>
+                  <input type="text" name="affiliation" value={formData.affiliation} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                 </div>
-                <div>
-                  <input type="text" name="doctorSpecialty" value={formData.doctorSpecialty} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="세부전공" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  주증상 <span className="text-red-500">*</span>
+                </label>
+                <textarea name="mainSymptoms" value={formData.mainSymptoms} onChange={handleInputChange} rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="주요 증상을 입력하세요" required />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  활력징후
+                </label>
+                <textarea name="vitalSigns" value={formData.vitalSigns} onChange={handleInputChange} rows={2} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="혈압, 맥박, 호흡 등" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  의식 여부 <span className="text-red-500">*</span>
+                </label>
+                <div className="flex space-x-4">
+                  <button type="button" onClick={() => handleConsciousnessSelect('O')} className={`flex items-center justify-center w-12 h-12 rounded-full ${formData.consciousness === 'O' ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700'}`}>
+                    O
+                  </button>
+                  <button type="button" onClick={() => handleConsciousnessSelect('△')} className={`flex items-center justify-center w-12 h-12 rounded-full ${formData.consciousness === '△' ? 'bg-yellow-500 text-white' : 'bg-gray-100 text-gray-700'}`}>
+                    △
+                  </button>
+                  <button type="button" onClick={() => handleConsciousnessSelect('X')} className={`flex items-center justify-center w-12 h-12 rounded-full ${formData.consciousness === 'X' ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-700'}`}>
+                    X
+                  </button>
                 </div>
               </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                이동 소요 시간 (분)
-              </label>
-              <input type="number" name="travelTime" value={formData.travelTime} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="분 단위로 입력" min="0" />
-            </div>
-            <div className="pt-4 mt-auto">
-              {formData.emergencyStatus === 'emergency' && <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-start">
-                  <AlertCircleIcon className="h-5 w-5 text-red-500 mr-2 mt-0.5" />
-                  <p className="text-sm text-red-700">
-                    응급 환자로 분류되었습니다. 최대한 신속하게 처리해 주세요.
-                  </p>
-                </div>}
+            <div className="mt-8 pt-5 border-t border-gray-200 flex justify-end space-x-3">
+              <button type="button" onClick={handleReset} className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 flex items-center">
+                <RefreshCwIcon className="h-4 w-4 mr-1" />
+                초기화
+              </button>
+              <button type="submit" className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 flex items-center">
+                <ArrowRightIcon className="h-4 w-4 mr-1" />
+                다음 단계
+              </button>
             </div>
           </div>
-        </div>
-      </div>
-      <div className="mt-8 pt-5 border-t border-gray-200 flex justify-end space-x-3">
-        <button type="button" onClick={handleReset} className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 flex items-center">
-          <RefreshCwIcon className="h-4 w-4 mr-1" />
-          초기화
-        </button>
-        <button type="submit" className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 flex items-center">
-          <SendIcon className="h-4 w-4 mr-1" />
-          제출하기
-        </button>
-      </div>
-    </form>;
+        </form> :
+    // Step 2: Transport Information Form
+    <form onSubmit={handleFinalSubmit}>
+          <div className="space-y-6">
+            {/* Patient Info Summary */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-sm font-medium text-gray-700 mb-2">
+                환자 정보 요약
+              </h3>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-gray-500">이름:</span>{' '}
+                  <span className="font-medium">{formData.name}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">군번:</span>{' '}
+                  <span className="font-medium">{formData.serviceNumber}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">소속:</span>{' '}
+                  <span className="font-medium">{formData.affiliation}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">의식상태:</span>{' '}
+                  <span className="font-medium">{formData.consciousness}</span>
+                </div>
+              </div>
+            </div>
+            {/* Transport Info */}
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold text-gray-700 border-b pb-2">
+                후송 정보
+              </h2>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    응급/비응급 여부
+                  </label>
+                  <select name="emergencyStatus" value={formData.emergencyStatus} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                    <option value="">선택하세요</option>
+                    <option value="emergency">응급</option>
+                    <option value="non-emergency">비응급</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    소속병원
+                  </label>
+                  <input type="text" name="hospitalAffiliation" value={formData.hospitalAffiliation} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="병원명 입력" />
+                </div>
+                <div className="space-y-3">
+                  <label className="block text-sm font-medium text-gray-700">
+                    군의관 정보
+                  </label>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <input type="text" name="doctorName" value={formData.doctorName} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="성명" />
+                    </div>
+                    <div>
+                      <input type="text" name="doctorRank" value={formData.doctorRank} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="계급" />
+                    </div>
+                    <div>
+                      <input type="text" name="doctorSpecialty" value={formData.doctorSpecialty} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="세부전공" />
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    이동 소요 시간 (분)
+                  </label>
+                  <input type="number" name="travelTime" value={formData.travelTime} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="분 단위로 입력" min="0" />
+                </div>
+                {formData.emergencyStatus === 'emergency' && <div className="p-3 bg-red-50 border border-red-200 rounded-md flex items-start">
+                    <AlertCircleIcon className="h-5 w-5 text-red-500 mr-2 mt-0.5" />
+                    <p className="text-sm text-red-700">
+                      응급 환자로 분류되었습니다. 최대한 신속하게 처리해 주세요.
+                    </p>
+                  </div>}
+              </div>
+            </div>
+            <div className="mt-8 pt-5 border-t border-gray-200 flex justify-end space-x-3">
+              <button type="button" onClick={() => setStep(1)} className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 flex items-center">
+                이전 단계
+              </button>
+              <button type="submit" className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 flex items-center">
+                <SendIcon className="h-4 w-4 mr-1" />
+                제출하기
+              </button>
+            </div>
+          </div>
+        </form>}
+    </div>;
 }
