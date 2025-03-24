@@ -1,37 +1,35 @@
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import { AlertCircleIcon, RefreshCwIcon, SendIcon, ArrowRightIcon, UserIcon } from 'lucide-react';
 // Mock database for service number lookup
 const mockUserDatabase = {
-  '12345678': {
-    name: '홍길동',
-    affiliation: '제1보병사단'
-  },
-  '87654321': {
+  '24-12345678': {
     name: '김철수',
-    affiliation: '제2기갑여단'
+    affiliation: 'OO사단 OO여단 본부 의무중대'
   },
-  '11223344': {
+  '24-98765432': {
     name: '이영희',
-    affiliation: '제3특전여단'
-  }
+    affiliation: 'XX사단 XX여단 본부 통신중대'
+  },
 };
 // Mock transport information database
 const mockTransportDatabase = {
-  '12345678': {
+  '24-12345678': {
     emergencyStatus: 'emergency',
-    hospitalAffiliation: '국군수도병원',
+    hospitalAffiliation: '국군AA병원',
     doctorName: '박의사',
     doctorRank: '대위',
-    doctorSpecialty: '내과',
-    travelTime: '30'
+    doctorSpecialty: '대장항문외과',
+    travelTime: '90',
+    guide: '1. 활력징후(체온, 혈압, 맥박, 호흡수) 모니터링\n2. 물 포함 금식 유지 (수술 가능성 고려)\n3. 기존 처방 약물 지참\n4. 오물봉투 지참 (구토 시 사용)'
   },
-  '87654321': {
+  '24-98765432': {
     emergencyStatus: 'non-emergency',
-    hospitalAffiliation: '국군대전병원',
+    hospitalAffiliation: 'XX사단의무대대',
     doctorName: '김의사',
-    doctorRank: '소령',
-    doctorSpecialty: '외과',
-    travelTime: '45'
+    doctorRank: '대위',
+    doctorSpecialty: '응급의학과',
+    travelTime: '30',
+    guide: '1. 후송 전 부목 또는 압박붕대 적용 가능할 시 시행\n2. 얼음찜질 적용\n3. 들것 지참'
   }
 };
 export function EmergencyTransportForm() {
@@ -41,6 +39,9 @@ export function EmergencyTransportForm() {
     name: '',
     affiliation: '',
     mainSymptoms: '',
+    symptom1: '',
+    symptom2: '',
+    symptom3: '',
     vitalSigns: '',
     consciousness: '',
     emergencyStatus: '',
@@ -48,7 +49,13 @@ export function EmergencyTransportForm() {
     doctorName: '',
     doctorRank: '',
     doctorSpecialty: '',
-    travelTime: ''
+    travelTime: '',
+    temperature: '',
+    bloodPressure: '',
+    pulse: '',
+    respiration: '',
+    guide: '',
+    memo: '',
   });
   // Handle input changes
   const handleInputChange = e => {
@@ -83,7 +90,7 @@ export function EmergencyTransportForm() {
   const handlePatientInfoSubmit = e => {
     e.preventDefault();
     // Validate required fields
-    if (!formData.serviceNumber || !formData.mainSymptoms || !formData.consciousness) {
+    if (!formData.serviceNumber || !formData.symptom1 || !formData.symptom2 || !formData.symptom3 || !formData.consciousness) {
       alert('필수 정보를 모두 입력해주세요.');
       return;
     }
@@ -110,6 +117,9 @@ export function EmergencyTransportForm() {
       name: '',
       affiliation: '',
       mainSymptoms: '',
+      symptom1: '',
+      symptom2: '',
+      symptom3: '',
       vitalSigns: '',
       consciousness: '',
       emergencyStatus: '',
@@ -117,7 +127,13 @@ export function EmergencyTransportForm() {
       doctorName: '',
       doctorRank: '',
       doctorSpecialty: '',
-      travelTime: ''
+      travelTime: '',
+      temperature: '',
+      bloodPressure: '',
+      pulse: '',
+      respiration: '',
+      guide: '',
+      memo: '',
     });
     setStep(1);
   };
@@ -174,13 +190,67 @@ export function EmergencyTransportForm() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   주증상 <span className="text-red-500">*</span>
                 </label>
-                <textarea name="mainSymptoms" value={formData.mainSymptoms} onChange={handleInputChange} rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="주요 증상을 입력하세요" required />
+                <table className="w-full border border-gray-200 rounded-md">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <select name="symptom1" value={formData.symptom1} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                          <option value="">선택하세요</option>
+                          <option value="emergency">응급</option>
+                          <option value="non-emergency">비응급</option>
+                        </select>
+                      </td>
+                      <td>
+                        <select name="symptom2" value={formData.symptom2} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                          <option value="">선택하세요</option>
+                          <option value="emergency">응급</option>
+                          <option value="non-emergency">비응급</option>
+                        </select>
+                      </td>
+                      <td>
+                        <select name="symptom3" value={formData.symptom3} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                          <option value="">선택하세요</option>
+                          <option value="emergency">응급</option>
+                          <option value="non-emergency">비응급</option>
+                        </select>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                {/* <textarea name="mainSymptoms" value={formData.mainSymptoms} onChange={handleInputChange} rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="주요 증상을 입력하세요" required /> */}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  활력징후
+                  활력징후 <span className="text-red-500">*</span>
                 </label>
-                <textarea name="vitalSigns" value={formData.vitalSigns} onChange={handleInputChange} rows={2} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="혈압, 맥박, 호흡 등" />
+                {/* table */}
+                <table className="w-full border border-gray-200 rounded-md">
+                  <thead>
+                    <tr>
+                      <th className="border-b border-gray-200 p-2">체온</th> 
+                      <th className="border-b border-gray-200 p-2">혈압</th>
+                      <th className="border-b border-gray-200 p-2">맥박</th>
+                      <th className="border-b border-gray-200 p-2">호흡</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="border-b border-gray-200 p-2">
+                        <input type="number" name="temperature" value={formData.temperature} onChange={handleInputChange} className="w-full px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="체온" required step="0.1"/>
+                      </td>
+                      <td className="border-b border-gray-200 p-2">
+                        <input type="number" name="bloodPressure" value={formData.bloodPressure} onChange={handleInputChange} className="w-full px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="혈압" required/>
+                      </td>
+                      <td className="border-b border-gray-200 p-2">
+                        <input type="number" name="pulse" value={formData.pulse} onChange={handleInputChange} className="w-full px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="맥박" required/>
+                      </td>
+                      <td className="border-b border-gray-200 p-2">
+                        <input type="number" name="respiration" value={formData.respiration} onChange={handleInputChange} className="w-full px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="호흡" required/>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                {/* <textarea name="vitalSigns" value={formData.vitalSigns} onChange={handleInputChange} rows={2} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="혈압, 맥박, 호흡 등" /> */}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -197,6 +267,12 @@ export function EmergencyTransportForm() {
                     X
                   </button>
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  진료메모 <span className="text-red-500">*</span>
+                </label>
+                <textarea name="memo" value={formData.memo} onChange={handleInputChange} rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="진료 메모를 입력하세요" required />
               </div>
             </div>
             <div className="mt-8 pt-5 border-t border-gray-200 flex justify-end space-x-3">
@@ -216,25 +292,61 @@ export function EmergencyTransportForm() {
           <div className="space-y-6">
             {/* Patient Info Summary */}
             <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="text-sm font-medium text-gray-700 mb-2">
-                환자 정보 요약
-              </h3>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="text-gray-500">이름:</span>{' '}
-                  <span className="font-medium">{formData.name}</span>
+              <h3 className="font-bold text-gray-800 mb-6 text-center text-xl">📝 환자 정보 요약</h3>
+
+              {/* 기본 정보 */}
+              <div className="grid grid-cols-4 gap-4 text-sm text-gray-700">
+                <div className="flex flex-col items-center">
+                  <span className="text-gray-500 mb-1">이름</span>
+                  <span className="font-semibold">{formData.name}</span>
                 </div>
-                <div>
-                  <span className="text-gray-500">군번:</span>{' '}
-                  <span className="font-medium">{formData.serviceNumber}</span>
+                <div className="flex flex-col items-center">
+                  <span className="text-gray-500 mb-1">군번</span>
+                  <span className="font-semibold">{formData.serviceNumber}</span>
                 </div>
-                <div>
-                  <span className="text-gray-500">소속:</span>{' '}
-                  <span className="font-medium">{formData.affiliation}</span>
+                <div className="flex flex-col items-center">
+                  <span className="text-gray-500 mb-1">소속</span>
+                  <span className="font-semibold">{formData.affiliation}</span>
                 </div>
-                <div>
-                  <span className="text-gray-500">의식상태:</span>{' '}
-                  <span className="font-medium">{formData.consciousness}</span>
+                <div className="flex flex-col items-center">
+                  <span className="text-gray-500 mb-1">의식상태</span>
+                  <span className="font-semibold">{formData.consciousness}</span>
+                </div>
+              </div>
+
+              {/* 증상 */}
+              <div className="grid grid-cols-3 gap-4 text-sm text-gray-700 mt-6">
+                <div className="flex flex-col items-center">
+                  <span className="text-gray-500 mb-1">증상 1</span>
+                  <span className="font-semibold">{formData.symptom1}</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="text-gray-500 mb-1">증상 2</span>
+                  <span className="font-semibold">{formData.symptom2}</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="text-gray-500 mb-1">증상 3</span>
+                  <span className="font-semibold">{formData.symptom3}</span>
+                </div>
+              </div>
+
+              {/* 바이탈 사인 */}
+              <div className="grid grid-cols-4 gap-4 text-sm text-gray-700 mt-6">
+                <div className="flex flex-col items-center">
+                  <span className="text-gray-500 mb-1">체온</span>
+                  <span className="font-semibold">{formData.temperature}</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="text-gray-500 mb-1">혈압</span>
+                  <span className="font-semibold">{formData.bloodPressure}</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="text-gray-500 mb-1">맥박</span>
+                  <span className="font-semibold">{formData.pulse}</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="text-gray-500 mb-1">호흡 수</span>
+                  <span className="font-semibold">{formData.respiration}</span>
                 </div>
               </div>
             </div>
@@ -281,6 +393,13 @@ export function EmergencyTransportForm() {
                     이동 소요 시간 (분)
                   </label>
                   <input type="number" name="travelTime" value={formData.travelTime} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="분 단위로 입력" min="0" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    응급 조치 가이드
+                  </label>
+                  <textarea name="guide" value={formData.guide} onChange={handleInputChange} rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="응급 조치 가이드" />
+                  {/* <input type="text" name="guide" value={formData.guide} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="분 단위로 입력" /> */}
                 </div>
                 {formData.emergencyStatus === 'emergency' && <div className="p-3 bg-red-50 border border-red-200 rounded-md flex items-start">
                     <AlertCircleIcon className="h-5 w-5 text-red-500 mr-2 mt-0.5" />
