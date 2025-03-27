@@ -253,7 +253,7 @@ export function EmergencyTransportForm() {
                         </select>
                       </td>
                       <td>
-                        <select name="symptom2" value={formData.symptom2} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                        <select name="symptom2" value={formData.symptom2} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                           <option value="">선택하세요</option>
                           <option value="복통">복통</option>
                           <option value="구토">구토</option>
@@ -312,7 +312,7 @@ export function EmergencyTransportForm() {
                         </select>
                       </td>
                       <td>
-                        <select name="symptom3" value={formData.symptom3} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                        <select name="symptom3" value={formData.symptom3} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                           <option value="">선택하세요</option>
                           <option value="복통">복통</option>
                           <option value="구토">구토</option>
