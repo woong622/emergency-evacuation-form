@@ -196,22 +196,180 @@ export function EmergencyTransportForm() {
                       <td>
                         <select name="symptom1" value={formData.symptom1} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
                           <option value="">선택하세요</option>
-                          <option value="emergency">응급</option>
-                          <option value="non-emergency">비응급</option>
+                          <option value="복통">복통</option>
+                          <option value="구토">구토</option>
+                          <option value="설사">설사</option>
+                          <option disabled>──────────</option>
+
+                          <option value="토혈">토혈</option>
+                          <option value="혈변">혈변</option>
+                          <option disabled>──────────</option>
+                          
+                          <option value="가슴통증">가슴통증</option>
+                          <option value="두근거림">두근거림</option>
+                          <option disabled>──────────</option>
+
+                          <option value="발열">발열</option>
+                          <option value="기침">기침</option>
+                          <option value="콧물">콧물</option>
+                          <option value="코막힘">코막힘</option>
+                          <option disabled>──────────</option>
+
+                          <option value="호흡곤란">호흡곤란</option>
+                          <option disabled>──────────</option>
+
+                          <option value="붉은색 소변">붉은색 소변</option>
+                          <option disabled>──────────</option>
+
+                          <option value="접질림">접질림</option>
+                          <option value="목통증">목통증</option>
+                          <option value="허리통증">허리통증</option>
+                          <option disabled>──────────</option>
+
+                          <option value="피부 발진">피부 발진</option>
+                          <option disabled>──────────</option>
+
+                          <option value="두통">두통</option>
+                          <option value="어지럼증">어지럼증</option>
+                          <option value="의식이상">의식이상</option>
+                          <option disabled>──────────</option>
+                          
+                          <option value="우울/불안">우울/불안</option>
+                          <option value="자살시도">자살시도</option>
+                          <option disabled>──────────</option>
+
+                          <option value="유방통">유방통</option>
+                          <option value="질분비물/질출혈">질분비물/질출혈</option>
+                          <option disabled>──────────</option>
+
+                          <option value="약물중독">약물중독</option>
+                          <option disabled>──────────</option>
+
+                          <option value="벌쏘임">벌쏘임</option>
+                          <option value="안구손상">안구손상</option>
+                          <option value="교상">교상</option>
+                          <option value="총상">총상</option>
+                          <option value="절단상">절단상</option>
                         </select>
                       </td>
                       <td>
                         <select name="symptom2" value={formData.symptom2} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
                           <option value="">선택하세요</option>
-                          <option value="emergency">응급</option>
-                          <option value="non-emergency">비응급</option>
+                          <option value="">선택하세요</option>
+                          <option value="복통">복통</option>
+                          <option value="구토">구토</option>
+                          <option value="설사">설사</option>
+                          <option disabled>──────────</option>
+
+                          <option value="토혈">토혈</option>
+                          <option value="혈변">혈변</option>
+                          <option disabled>──────────</option>
+                          
+                          <option value="가슴통증">가슴통증</option>
+                          <option value="두근거림">두근거림</option>
+                          <option disabled>──────────</option>
+
+                          <option value="발열">발열</option>
+                          <option value="기침">기침</option>
+                          <option value="콧물">콧물</option>
+                          <option value="코막힘">코막힘</option>
+                          <option disabled>──────────</option>
+
+                          <option value="호흡곤란">호흡곤란</option>
+                          <option disabled>──────────</option>
+
+                          <option value="붉은색 소변">붉은색 소변</option>
+                          <option disabled>──────────</option>
+
+                          <option value="접질림">접질림</option>
+                          <option value="목통증">목통증</option>
+                          <option value="허리통증">허리통증</option>
+                          <option disabled>──────────</option>
+
+                          <option value="피부 발진">피부 발진</option>
+                          <option disabled>──────────</option>
+
+                          <option value="두통">두통</option>
+                          <option value="어지럼증">어지럼증</option>
+                          <option value="의식이상">의식이상</option>
+                          <option disabled>──────────</option>
+                          
+                          <option value="우울/불안">우울/불안</option>
+                          <option value="자살시도">자살시도</option>
+                          <option disabled>──────────</option>
+
+                          <option value="유방통">유방통</option>
+                          <option value="질분비물/질출혈">질분비물/질출혈</option>
+                          <option disabled>──────────</option>
+
+                          <option value="약물중독">약물중독</option>
+                          <option disabled>──────────</option>
+
+                          <option value="벌쏘임">벌쏘임</option>
+                          <option value="안구손상">안구손상</option>
+                          <option value="교상">교상</option>
+                          <option value="총상">총상</option>
+                          <option value="절단상">절단상</option>
                         </select>
                       </td>
                       <td>
                         <select name="symptom3" value={formData.symptom3} onChange={handleInputChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
                           <option value="">선택하세요</option>
-                          <option value="emergency">응급</option>
-                          <option value="non-emergency">비응급</option>
+                          <option value="">선택하세요</option>
+                          <option value="복통">복통</option>
+                          <option value="구토">구토</option>
+                          <option value="설사">설사</option>
+                          <option disabled>──────────</option>
+
+                          <option value="토혈">토혈</option>
+                          <option value="혈변">혈변</option>
+                          <option disabled>──────────</option>
+                          
+                          <option value="가슴통증">가슴통증</option>
+                          <option value="두근거림">두근거림</option>
+                          <option disabled>──────────</option>
+
+                          <option value="발열">발열</option>
+                          <option value="기침">기침</option>
+                          <option value="콧물">콧물</option>
+                          <option value="코막힘">코막힘</option>
+                          <option disabled>──────────</option>
+
+                          <option value="호흡곤란">호흡곤란</option>
+                          <option disabled>──────────</option>
+
+                          <option value="붉은색 소변">붉은색 소변</option>
+                          <option disabled>──────────</option>
+
+                          <option value="접질림">접질림</option>
+                          <option value="목통증">목통증</option>
+                          <option value="허리통증">허리통증</option>
+                          <option disabled>──────────</option>
+
+                          <option value="피부 발진">피부 발진</option>
+                          <option disabled>──────────</option>
+
+                          <option value="두통">두통</option>
+                          <option value="어지럼증">어지럼증</option>
+                          <option value="의식이상">의식이상</option>
+                          <option disabled>──────────</option>
+                          
+                          <option value="우울/불안">우울/불안</option>
+                          <option value="자살시도">자살시도</option>
+                          <option disabled>──────────</option>
+
+                          <option value="유방통">유방통</option>
+                          <option value="질분비물/질출혈">질분비물/질출혈</option>
+                          <option disabled>──────────</option>
+
+                          <option value="약물중독">약물중독</option>
+                          <option disabled>──────────</option>
+
+                          <option value="벌쏘임">벌쏘임</option>
+                          <option value="안구손상">안구손상</option>
+                          <option value="교상">교상</option>
+                          <option value="총상">총상</option>
+                          <option value="절단상">절단상</option>
                         </select>
                       </td>
                     </tr>
