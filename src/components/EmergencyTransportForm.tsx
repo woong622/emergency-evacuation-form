@@ -90,7 +90,7 @@ export function EmergencyTransportForm() {
   const handlePatientInfoSubmit = e => {
     e.preventDefault();
     // Validate required fields
-    if (!formData.serviceNumber || !formData.symptom1 || !formData.symptom2 || !formData.symptom3 || !formData.consciousness) {
+    if (!formData.serviceNumber || !formData.symptom1 || !formData.consciousness) {
       alert('필수 정보를 모두 입력해주세요.');
       return;
     }
